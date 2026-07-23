@@ -1292,7 +1292,13 @@ header.fade-out {
   border-radius: 10px;
   padding: 14px;
   transform: translateY(30px);
+  transition: 0.3s;
 }
+
+ .project-card:hover {
+   scale: 1.05;
+   border: 1px solid var(--border-active);
+ }
 
 .project-card.in-view {
   animation-name: slideFadeUp;
