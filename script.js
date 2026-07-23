@@ -205,7 +205,6 @@ if (aboutDescEl) {
   aboutDescObserver.observe(aboutDescEl);
 }
 
- // Timeline zigzag reveal (reuse existing keyframes)
 const timelineItems = document.querySelectorAll('.timeline-item');
 
 const timelineObserver = new IntersectionObserver((entries) => {
@@ -318,3 +317,140 @@ document.querySelectorAll('.contact-form-wrapper.reveal-right').forEach(el => {
   }, { threshold: 0.2 });
   formObs.observe(el);
 });
+
+// ===== MUSIC PLAYER (YouTube via Worker) =====
+const WORKER_ENDPOINT = "https://yt-music-portofolio.iostream911.workers.dev/";
+
+const musicToggleBtn = document.getElementById('music-toggle-btn');
+const musicOverlay = document.getElementById('music-overlay');
+const musicCloseBtn = document.getElementById('music-close-btn');
+const musicSearchInput = document.getElementById('music-search-input');
+const musicSearchBtn = document.getElementById('music-search-btn');
+const musicResults = document.getElementById('music-results');
+const npThumb = document.getElementById('np-thumb');
+const npTitle = document.getElementById('np-title');
+const npChannel = document.getElementById('np-channel');
+const npPlayPause = document.getElementById('np-playpause');
+
+let ytPlayer = null;
+let isPlayerReady = false;
+let isPlaying = false;
+
+musicToggleBtn?.addEventListener('click', () => {
+  musicOverlay.classList.add('open');
+});
+
+musicCloseBtn?.addEventListener('click', () => {
+  musicOverlay.classList.remove('open');
+});
+
+musicOverlay?.addEventListener('click', (e) => {
+  if (e.target === musicOverlay) musicOverlay.classList.remove('open');
+});
+
+async function searchMusic(query) {
+  musicResults.innerHTML = '<p class="music-hint">Mencari...</p>';
+  try {
+    const res = await fetch(`${WORKER_ENDPOINT}?q=${encodeURIComponent(query)}`);
+    const data = await res.json();
+
+    if (!data.items || data.items.length === 0) {
+      musicResults.innerHTML = '<p class="music-hint">Tidak ada hasil.</p>';
+      return;
+    }
+
+    musicResults.innerHTML = '';
+    data.items.forEach(item => {
+      if (!item.id || !item.id.videoId) return;
+
+      const el = document.createElement('div');
+      el.className = 'music-result-item';
+      el.innerHTML = `
+        <img src="${item.snippet.thumbnails.default.url}" alt="">
+        <div class="music-result-info">
+          <span>${item.snippet.title}</span>
+          <span>${item.snippet.channelTitle}</span>
+        </div>
+      `;
+      el.addEventListener('click', () => playTrack(item));
+      musicResults.appendChild(el);
+    });
+  } catch (err) {
+    musicResults.innerHTML = '<p class="music-hint">Gagal memuat, coba lagi.</p>';
+  }
+}
+
+musicSearchBtn?.addEventListener('click', () => {
+  const q = musicSearchInput.value.trim();
+  if (q) searchMusic(q);
+});
+
+musicSearchInput?.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    const q = musicSearchInput.value.trim();
+    if (q) searchMusic(q);
+  }
+});
+
+function playTrack(item) {
+  const videoId = item.id.videoId;
+  npThumb.src = item.snippet.thumbnails.default.url;
+  npTitle.textContent = item.snippet.title;
+  npChannel.textContent = item.snippet.channelTitle;
+
+  if (!isPlayerReady) {
+    pendingVideoId = videoId;
+    return;
+  }
+  ytPlayer.loadVideoById(videoId);
+  isPlaying = true;
+  updatePlayPauseIcon();
+}
+
+let pendingVideoId = null;
+
+function loadYouTubeAPI() {
+  const tag = document.createElement('script');
+  tag.src = "https://www.youtube.com/iframe_api";
+  document.body.appendChild(tag);
+}
+
+window.onYouTubeIframeAPIReady = function () {
+  ytPlayer = new YT.Player('yt-player-hidden', {
+    height: '0',
+    width: '0',
+    playerVars: { autoplay: 0, controls: 0 },
+    events: {
+      onReady: () => {
+        isPlayerReady = true;
+        if (pendingVideoId) {
+          ytPlayer.loadVideoById(pendingVideoId);
+          isPlaying = true;
+          updatePlayPauseIcon();
+          pendingVideoId = null;
+        }
+      },
+      onStateChange: (event) => {
+        isPlaying = event.data === YT.PlayerState.PLAYING;
+        updatePlayPauseIcon();
+      }
+    }
+  });
+};
+
+function updatePlayPauseIcon() {
+  npPlayPause.innerHTML = isPlaying
+    ? '<i class="fa-solid fa-pause"></i>'
+    : '<i class="fa-solid fa-play"></i>';
+}
+
+npPlayPause?.addEventListener('click', () => {
+  if (!ytPlayer) return;
+  if (isPlaying) {
+    ytPlayer.pauseVideo();
+  } else {
+    ytPlayer.playVideo();
+  }
+});
+
+loadYouTubeAPI();

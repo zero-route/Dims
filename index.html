@@ -50,6 +50,9 @@
       <span class="badge-available">
         <span class="dot-pulse"></span> Available for projects
       </span>
+  <button class="music-toggle-btn" id="music-toggle-btn" aria-label="Open music player">
+    <i class="fa-solid fa-music"></i>
+  </button>
  <h1 class="hero-title">
   <span class="hero-title-line1">SYSTEM</span>
   <span class="hero-title-gradient">ENGINEER</span>
@@ -441,7 +444,7 @@
       <div class="footer-col">
         <a href="#home" class="nav-logo">Zero-Route.Github.Io</a>
         <p class="footer-text">Dimas Aksa Oktapian</p>
-        <p class="footer-text"><i class="fa-solid fa-location-dot"></i> Barru, Indonesia</p>
+        <p class="footer-text"><i class="fa-solid fa-location-dot"></i> Jakarta, Indonesia</p>
       </div>
 
       <div class="footer-col">
@@ -470,6 +473,35 @@
     <p class="footer-copyright">© 2026 Dimas Aksa Oktapian. All rights reserved.</p>
   </footer>
 </section>
+
+ <div class="music-player-overlay" id="music-overlay">
+  <div class="music-player-panel">
+    <div class="music-player-header">
+      <h3><i class="fa-solid fa-compact-disc"></i> Music Player</h3>
+      <button id="music-close-btn" class="music-close-btn"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
+    <div class="music-search-box">
+      <input type="text" id="music-search-input" placeholder="Cari lagu, artis...">
+      <button id="music-search-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+    </div>
+
+    <div class="music-results" id="music-results">
+      <p class="music-hint">Ketik lagu yang ingin dicari, lalu tekan enter.</p>
+    </div>
+
+    <div class="music-now-playing" id="music-now-playing">
+      <img id="np-thumb" src="" alt="">
+      <div class="np-info">
+        <span id="np-title">Belum ada lagu diputar</span>
+        <span id="np-channel">-</span>
+      </div>
+      <button id="np-playpause"><i class="fa-solid fa-play"></i></button>
+    </div>
+  </div>
+</div>
+
+<div id="yt-player-hidden"></div>
 
 </div>
   <script src="script.js"></script>
