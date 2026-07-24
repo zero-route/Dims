@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 
 <head>
@@ -474,34 +474,71 @@
   </footer>
 </section>
 
- <div class="music-player-overlay" id="music-overlay">
+<div class="music-player-overlay" id="music-overlay">
   <div class="music-player-panel">
-    <div class="music-player-header">
-      <h3><i class="fa-solid fa-compact-disc"></i> Music Player</h3>
-      <button id="music-close-btn" class="music-close-btn"><i class="fa-solid fa-xmark"></i></button>
-    </div>
 
-    <div class="music-search-box">
-      <input type="text" id="music-search-input" placeholder="Cari lagu, artis...">
-      <button id="music-search-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
-    </div>
-
-    <div class="music-results" id="music-results">
-      <p class="music-hint">Ketik lagu yang ingin dicari, lalu tekan enter.</p>
-    </div>
-
-    <div class="music-now-playing" id="music-now-playing">
-      <img id="np-thumb" src="" alt="">
-      <div class="np-info">
-        <span id="np-title">Belum ada lagu diputar</span>
-        <span id="np-channel">-</span>
+    <!-- VIEW 1: SEARCH -->
+    <div class="music-view music-view-search active" id="view-search">
+      <div class="music-player-header">
+        <h3><i class="fa-solid fa-compact-disc"></i> Music Player</h3>
+        <button id="music-close-btn" class="music-close-btn"><i class="fa-solid fa-xmark"></i></button>
       </div>
-      <button id="np-playpause"><i class="fa-solid fa-play"></i></button>
+
+      <div class="music-search-box">
+        <input type="text" id="music-search-input" placeholder="Cari lagu, artis...">
+        <button id="music-search-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+      </div>
+
+      <div class="music-results" id="music-results">
+        <p class="music-hint">Ketik lagu yang ingin dicari, lalu tekan enter.</p>
+      </div>
+
+      <div class="music-now-playing" id="music-now-playing">
+        <img id="np-thumb" src="" alt="">
+        <div class="np-info">
+          <span id="np-title">Belum ada lagu diputar</span>
+          <span id="np-channel">-</span>
+        </div>
+        <button id="np-playpause"><i class="fa-solid fa-play"></i></button>
+      </div>
     </div>
+
+    <!-- VIEW 2: NOW PLAYING (full, ala Spotify) -->
+    <div class="music-view music-view-nowplaying" id="view-nowplaying">
+      <div class="np-full-header">
+        <button id="np-back-btn" class="np-back-btn"><i class="fa-solid fa-chevron-down"></i></button>
+        <span>Now Playing</span>
+        <button id="music-close-btn-2" class="music-close-btn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="vinyl-wrapper">
+        <div class="vinyl-disc" id="vinyl-disc">
+          
+        </div>
+      </div>
+      <h4 class="np-full-title" id="np-full-title">Belum ada lagu diputar</h4>
+      <p class="np-full-channel" id="np-full-channel">-</p>
+
+      <div class="np-progress-row">
+        <span id="np-current-time">0:00</span>
+        <input type="range" id="np-progress-bar" min="0" max="100" value="0">
+        <span id="np-duration">0:00</span>
+      </div>
+
+      <div class="np-controls-row">
+        <button id="np-prev-btn"><i class="fa-solid fa-backward-step"></i></button>
+        <button id="np-full-playpause"><i class="fa-solid fa-play"></i></button>
+        <button id="np-next-btn"><i class="fa-solid fa-forward-step"></i></button>
+      </div>
+
+      <div class="np-volume-row">
+        <i class="fa-solid fa-volume-low"></i>
+        <input type="range" id="np-volume-bar" min="0" max="100" value="80">
+      </div>
+    </div>
+   <div id="yt-player-hidden"></div>
   </div>
 </div>
-
-<div id="yt-player-hidden"></div>
 
 </div>
   <script src="script.js"></script>
