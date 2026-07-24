@@ -50,11 +50,6 @@
       <span class="badge-available">
         <span class="dot-pulse"></span> Available for projects
       </span>
-      
-          <button class="chatbot-toggle-btn" id="chatbot-toggle-btn" aria-label="Open AI chatbot">
-    <i class="devicon-godot-plain"></i>
-  </button>
-  
   <button class="music-toggle-btn" id="music-toggle-btn" aria-label="Open music player">
     <i class="fa-solid fa-music"></i>
   </button>
@@ -479,7 +474,6 @@
   </footer>
 </section>
 
-
 <div class="music-player-overlay" id="music-overlay">
   <div class="music-player-panel">
     
@@ -517,11 +511,11 @@
         <button id="music-close-btn-2" class="music-close-btn"><i class="fa-solid fa-xmark"></i></button>
       </div>
 
-      <div class="vinyl-wrapper">
-        <div class="vinyl-disc" id="vinyl-disc">
-          
-        </div>
-      </div>
+    <div class="vinyl-wrapper">
+  <div class="vinyl-disc" id="vinyl-disc">
+    <img class="vinyl-label" id="vinyl-label" src="" alt="">
+  </div>
+</div>
       <h4 class="np-full-title" id="np-full-title">Belum ada lagu diputar</h4>
       <p class="np-full-channel" id="np-full-channel">-</p>
 
@@ -542,38 +536,32 @@
         <input type="range" id="np-volume-bar" min="0" max="100" value="80">
       </div>
     </div>
-   <div id="yt-player-hidden"></div>
+<div id="yt-player-hidden"></div>
   </div>
 </div>
 
- 
- <div class="chatbot-panel" id="chatbot-panel">
-  <div class="chatbot-header">
-    <div class="chatbot-header-info">
-      <div class="chatbot-avatar"><i class="devicon-godot-plain"></i></div>
-      <div>
-        <span class="chatbot-label">AI ASSISTANT</span>
-        <h4 class="chatbot-name">Zero-Route Assistant</h4>
-      </div>
-    </div>
-    <div class="chatbot-header-right">
-      <span class="chatbot-status"><span class="dot-pulse"></span> Online</span>
-      <button class="chatbot-close-btn" id="chatbot-close-btn"><i class="fa-solid fa-xmark"></i></button>
-    </div>
+<div class="mini-player" id="mini-player">
+  <div class="mini-progress-track">
+    <div class="mini-progress-fill" id="mini-progress-fill"></div>
   </div>
-
-  <div class="chatbot-messages" id="chatbot-messages">
-    <div class="chatbot-msg chatbot-msg-bot">
-      Hi! Saya Zero-Route Assistant. Tanyakan apa saja tentang Dimas, proyeknya, atau keahliannya.
+  <div class="mini-player-inner">
+    <div class="mini-thumb-wrap" id="mini-thumb-wrap">
+      <img id="mini-thumb" src="" alt="">
     </div>
-  </div>
-
-  <div class="chatbot-input-row">
-    <input type="text" id="chatbot-input" placeholder="Tanyakan tentang Dimas...">
-    <button id="chatbot-send-btn" aria-label="Send"><i class="fa-solid fa-paper-plane"></i></button>
+    <div class="mini-info">
+      <span id="mini-title">-</span>
+      <span id="mini-channel">-</span>
+    </div>
+    <div class="mini-controls">
+      <button id="mini-prev"><i class="fa-solid fa-backward-step"></i></button>
+      <button id="mini-playpause"><i class="fa-solid fa-play"></i></button>
+      <button id="mini-next"><i class="fa-solid fa-forward-step"></i></button>
+    </div>
   </div>
 </div>
 
+</div>
+  <script src="script.js"></script>
 
 </div>
   <script src="script.js"></script>

@@ -329,31 +329,12 @@ const npTitle = document.getElementById('np-title');
 const npChannel = document.getElementById('np-channel');
 const npPlayPause = document.getElementById('np-playpause');
 
-let ytPlayer = null;
-let isPlayerReady = false;
-let isPlaying = false;
-let pendingVideoId = null;
-let currentQueue = [];
-let currentIndex = -1;
-let progressInterval = null;
-
- const miniPlayer = document.getElementById('mini-player');
-const miniThumbWrap = document.getElementById('mini-thumb-wrap');
-const miniThumb = document.getElementById('mini-thumb');
-const miniTitle = document.getElementById('mini-title');
-const miniChannel = document.getElementById('mini-channel');
-const miniPlayPause = document.getElementById('mini-playpause');
-const miniPrev = document.getElementById('mini-prev');
-const miniNext = document.getElementById('mini-next');
-const miniProgressFill = document.getElementById('mini-progress-fill');
-
-const vinylLabel = document.getElementById('vinyl-label');
- 
 const viewSearch = document.getElementById('view-search');
 const viewNowPlaying = document.getElementById('view-nowplaying');
 const npBackBtn = document.getElementById('np-back-btn');
 const musicCloseBtn2 = document.getElementById('music-close-btn-2');
 const vinylDisc = document.getElementById('vinyl-disc');
+const vinylLabel = document.getElementById('vinyl-label');
 const npFullTitle = document.getElementById('np-full-title');
 const npFullChannel = document.getElementById('np-full-channel');
 const npProgressBar = document.getElementById('np-progress-bar');
@@ -363,6 +344,25 @@ const npFullPlayPause = document.getElementById('np-full-playpause');
 const npPrevBtn = document.getElementById('np-prev-btn');
 const npNextBtn = document.getElementById('np-next-btn');
 const npVolumeBar = document.getElementById('np-volume-bar');
+
+const miniPlayer = document.getElementById('mini-player');
+const miniThumbWrap = document.getElementById('mini-thumb-wrap');
+const miniThumb = document.getElementById('mini-thumb');
+const miniTitle = document.getElementById('mini-title');
+const miniChannel = document.getElementById('mini-channel');
+const miniPlayPause = document.getElementById('mini-playpause');
+const miniPrev = document.getElementById('mini-prev');
+const miniNext = document.getElementById('mini-next');
+const miniProgressFill = document.getElementById('mini-progress-fill');
+
+let ytPlayer = null;
+let isPlayerReady = false;
+let isPlaying = false;
+let pendingVideoId = null;
+let currentQueue = [];
+let currentIndex = -1;
+let progressInterval = null;
+let hasPlayedOnce = false;
 
 musicToggleBtn?.addEventListener('click', () => {
   musicOverlay.classList.add('open');
@@ -374,6 +374,12 @@ musicToggleBtn?.addEventListener('click', () => {
 
 musicOverlay?.addEventListener('click', (e) => {
   if (e.target === musicOverlay) musicOverlay.classList.remove('open');
+});
+
+miniPlayer?.addEventListener('click', (e) => {
+  if (e.target.closest('.mini-controls')) return;
+  musicOverlay.classList.add('open');
+  if (currentIndex >= 0) switchView('nowplaying');
 });
 
 function switchView(viewName) {
@@ -411,7 +417,7 @@ async function searchMusic(query) {
           <span>${item.snippet.channelTitle}</span>
         </div>
       `;
-      el.addEventListener('click', () => playTrackAt(index));
+      el.addEventListener('click', () => playTrackAt(index, el));
       musicResults.appendChild(el);
     });
   } catch (err) {
@@ -431,59 +437,51 @@ musicSearchInput?.addEventListener('keydown', (e) => {
   }
 });
 
- function updateMediaSession(item) {
-  if (!('mediaSession' in navigator)) return;
-
-  navigator.mediaSession.metadata = new MediaMetadata({
-    title: item.snippet.title,
-    artist: item.snippet.channelTitle,
-    artwork: [
-      { src: item.snippet.thumbnails.default.url, sizes: '120x90', type: 'image/jpeg' },
-      { src: item.snippet.thumbnails.medium?.url || item.snippet.thumbnails.default.url, sizes: '320x180', type: 'image/jpeg' }
-    ]
-  });
-
-  navigator.mediaSession.setActionHandler('play', () => ytPlayer.playVideo());
-  navigator.mediaSession.setActionHandler('pause', () => ytPlayer.pauseVideo());
-  navigator.mediaSession.setActionHandler('nexttrack', playNext);
-  navigator.mediaSession.setActionHandler('previoustrack', playPrev);
+function setLoadingState(el, loading) {
+  if (!el) return;
+  el.classList.toggle('is-loading', loading);
 }
 
-function playTrackAt(index) {
+function playTrackAt(index, clickedEl = null) {
   if (index < 0 || index >= currentQueue.length) return;
   currentIndex = index;
   const item = currentQueue[index];
   const videoId = item.id.videoId;
+  const thumbUrl = item.snippet.thumbnails.medium?.url || item.snippet.thumbnails.default.url;
 
-  npThumb.src = item.snippet.thumbnails.default.url;
+  // Loading indicator di hasil pencarian yang diklik
+  if (clickedEl) setLoadingState(clickedEl, true);
+
+  npThumb.src = thumbUrl;
   npTitle.textContent = item.snippet.title;
   npChannel.textContent = item.snippet.channelTitle;
   npFullTitle.textContent = item.snippet.title;
   npFullChannel.textContent = item.snippet.channelTitle;
-  
-  const thumbUrl = item.snippet.thumbnails.medium?.url
-  || item.snippet.thumbnails.high?.url
-  || item.snippet.thumbnails.default.url;
 
-vinylLabel.src = thumbUrl;
-vinylLabel.classList.add('loaded');
+  vinylLabel.src = thumbUrl;
+  vinylLabel.classList.remove('loaded');
+  vinylLabel.onload = () => vinylLabel.classList.add('loaded');
 
-  updateMediaSession(item);
-  
-miniThumb.src = thumbUrl;
-miniTitle.textContent = item.snippet.title;
-miniChannel.textContent = item.snippet.channelTitle;
-miniPlayer.classList.add('show');
-
+  miniThumb.src = thumbUrl;
+  miniTitle.textContent = item.snippet.title;
+  miniChannel.textContent = item.snippet.channelTitle;
 
   if (!isPlayerReady) {
     pendingVideoId = videoId;
     return;
   }
+
+  vinylDisc.classList.add('is-loading');
   ytPlayer.loadVideoById(videoId);
   isPlaying = true;
+  hasPlayedOnce = true;
   switchView('nowplaying');
   updatePlayPauseIcon();
+  showMiniPlayer();
+}
+
+function showMiniPlayer() {
+  miniPlayer?.classList.add('show');
 }
 
 function loadYouTubeAPI() {
@@ -500,38 +498,41 @@ window.onYouTubeIframeAPIReady = function () {
     events: {
       onReady: () => {
         isPlayerReady = true;
-        ytPlayer.setVolume(80);
+        ytPlayer.setVolume(npVolumeBar ? npVolumeBar.value : 80);
         if (pendingVideoId) {
+          vinylDisc.classList.add('is-loading');
           ytPlayer.loadVideoById(pendingVideoId);
           isPlaying = true;
+          hasPlayedOnce = true;
           updatePlayPauseIcon();
+          showMiniPlayer();
           pendingVideoId = null;
         }
       },
-onStateChange: (event) => {
-  const state = event.data;
+      onStateChange: (event) => {
+        // Buffering (loading) state
+        if (event.data === YT.PlayerState.BUFFERING) {
+          vinylDisc.classList.add('is-loading');
+        } else {
+          vinylDisc.classList.remove('is-loading');
+          document.querySelectorAll('.music-result-item.is-loading').forEach(el => {
+            el.classList.remove('is-loading');
+          });
+        }
 
-  isPlaying = state === YT.PlayerState.PLAYING;
-  updatePlayPauseIcon();
+        isPlaying = event.data === YT.PlayerState.PLAYING;
+        updatePlayPauseIcon();
 
-  if (state === YT.PlayerState.BUFFERING) {
-    npPlayPause.classList.add('is-loading');
-    npFullPlayPause.classList.add('is-loading');
-  } else {
-    npPlayPause.classList.remove('is-loading');
-    npFullPlayPause.classList.remove('is-loading');
-  }
+        if (event.data === YT.PlayerState.PLAYING) {
+          startProgressTracking();
+        } else {
+          stopProgressTracking();
+        }
 
-  if (state === YT.PlayerState.PLAYING) {
-    startProgressTracking();
-  } else {
-    stopProgressTracking();
-  }
-
-  if (state === YT.PlayerState.ENDED) {
-    playNext();
-  }
-}
+        if (event.data === YT.PlayerState.ENDED) {
+          playNext();
+        }
+      }
     }
   });
 };
@@ -540,9 +541,9 @@ function updatePlayPauseIcon() {
   const icon = isPlaying ? 'fa-pause' : 'fa-play';
   npPlayPause.innerHTML = `<i class="fa-solid ${icon}"></i>`;
   npFullPlayPause.innerHTML = `<i class="fa-solid ${icon}"></i>`;
-  miniPlayPause.innerHTML = `<i class="fa-solid ${icon}"></i>`;
+  if (miniPlayPause) miniPlayPause.innerHTML = `<i class="fa-solid ${icon}"></i>`;
   vinylDisc.classList.toggle('spinning', isPlaying);
-  miniThumbWrap.classList.toggle('spinning', isPlaying);
+  miniThumbWrap?.classList.toggle('spinning', isPlaying);
 }
 
 function togglePlayPause() {
@@ -556,6 +557,7 @@ function togglePlayPause() {
 
 npPlayPause?.addEventListener('click', togglePlayPause);
 npFullPlayPause?.addEventListener('click', togglePlayPause);
+miniPlayPause?.addEventListener('click', togglePlayPause);
 
 function playNext() {
   if (currentQueue.length === 0) return;
@@ -571,23 +573,8 @@ function playPrev() {
 
 npNextBtn?.addEventListener('click', playNext);
 npPrevBtn?.addEventListener('click', playPrev);
-
- miniPlayPause?.addEventListener('click', (e) => {
-  e.stopPropagation();
-  togglePlayPause();
-});
-miniNext?.addEventListener('click', (e) => {
-  e.stopPropagation();
-  playNext();
-});
-miniPrev?.addEventListener('click', (e) => {
-  e.stopPropagation();
-  playPrev();
-});
-miniPlayer?.addEventListener('click', () => {
-  musicOverlay.classList.add('open');
-  if (currentIndex >= 0) switchView('nowplaying');
-});
+miniNext?.addEventListener('click', playNext);
+miniPrev?.addEventListener('click', playPrev);
 
 function formatTime(seconds) {
   if (!seconds || isNaN(seconds)) return '0:00';
@@ -604,16 +591,11 @@ function startProgressTracking() {
     const duration = ytPlayer.getDuration();
 
     if (duration > 0) {
-      npProgressBar.value = (current / duration) * 100;
+      const pct = (current / duration) * 100;
+      npProgressBar.value = pct;
       npCurrentTime.textContent = formatTime(current);
       npDuration.textContent = formatTime(duration);
-      
-      if (duration > 0) {
-      npProgressBar.value = (current / duration) * 100;
-      npCurrentTime.textContent = formatTime(current);
-      npDuration.textContent = formatTime(duration);
-      miniProgressFill.style.width = ((current / duration) * 100) + '%';
-    }
+      if (miniProgressFill) miniProgressFill.style.width = pct + '%';
     }
   }, 500);
 }
@@ -626,18 +608,10 @@ function stopProgressTracking() {
 }
 
 npProgressBar?.addEventListener('input', () => {
-  stopProgressTracking();
-});
-
-npProgressBar?.addEventListener('change', () => {
   if (!ytPlayer || typeof ytPlayer.getDuration !== 'function') return;
   const duration = ytPlayer.getDuration();
   const seekTo = (npProgressBar.value / 100) * duration;
   ytPlayer.seekTo(seekTo, true);
-
-  if (isPlaying) {
-    ytPlayer.playVideo();
-  }
 });
 
 npVolumeBar?.addEventListener('input', () => {
@@ -646,73 +620,3 @@ npVolumeBar?.addEventListener('input', () => {
 });
 
 loadYouTubeAPI();
-
-  // ===== CHATBOT (Zero-Route Assistant via Gemini Worker) =====
-const CHATBOT_ENDPOINT = "https://gemini-chat-bot.iostream911.workers.dev/";
-
-const chatbotToggleBtn = document.getElementById('chatbot-toggle-btn');
-const chatbotPanel = document.getElementById('chatbot-panel');
-const chatbotCloseBtn = document.getElementById('chatbot-close-btn');
-const chatbotMessages = document.getElementById('chatbot-messages');
-const chatbotInput = document.getElementById('chatbot-input');
-const chatbotSendBtn = document.getElementById('chatbot-send-btn');
-
-let chatHistory = [];
-
-chatbotToggleBtn?.addEventListener('click', () => {
-  chatbotPanel.classList.toggle('open');
-});
-
-chatbotCloseBtn?.addEventListener('click', () => {
-  chatbotPanel.classList.remove('open');
-});
-
-function addChatMessage(text, sender) {
-  const el = document.createElement('div');
-  el.className = `chatbot-msg chatbot-msg-${sender}`;
-  el.textContent = text;
-  chatbotMessages.appendChild(el);
-  chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
-  return el;
-}
-
-async function sendChatMessage() {
-  const text = chatbotInput.value.trim();
-  if (!text) return;
-
-  addChatMessage(text, 'user');
-  chatbotInput.value = '';
-
-  const loadingEl = document.createElement('div');
-  loadingEl.className = 'chatbot-msg chatbot-msg-loading';
-  loadingEl.textContent = 'Mengetik...';
-  chatbotMessages.appendChild(loadingEl);
-  chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
-
-  try {
-    const res = await fetch(CHATBOT_ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: text, history: chatHistory })
-    });
-    const data = await res.json();
-
-    loadingEl.remove();
-    addChatMessage(data.reply, 'bot');
-
-    chatHistory.push({ role: 'user', parts: [{ text }] });
-    chatHistory.push({ role: 'model', parts: [{ text: data.reply }] });
-
-    // Batasi history biar payload nggak makin besar
-    if (chatHistory.length > 20) chatHistory = chatHistory.slice(-20);
-
-  } catch (err) {
-    loadingEl.remove();
-    addChatMessage('Maaf, terjadi kesalahan koneksi.', 'bot');
-  }
-}
-
-chatbotSendBtn?.addEventListener('click', sendChatMessage);
-chatbotInput?.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') sendChatMessage();
-});
