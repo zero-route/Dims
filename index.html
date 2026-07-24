@@ -50,6 +50,11 @@
       <span class="badge-available">
         <span class="dot-pulse"></span> Available for projects
       </span>
+      
+          <button class="chatbot-toggle-btn" id="chatbot-toggle-btn" aria-label="Open AI chatbot">
+    <i class="devicon-godot-plain"></i>
+  </button>
+  
   <button class="music-toggle-btn" id="music-toggle-btn" aria-label="Open music player">
     <i class="fa-solid fa-music"></i>
   </button>
@@ -474,6 +479,7 @@
   </footer>
 </section>
 
+
 <div class="music-player-overlay" id="music-overlay">
   <div class="music-player-panel">
     
@@ -539,6 +545,35 @@
    <div id="yt-player-hidden"></div>
   </div>
 </div>
+
+ 
+ <div class="chatbot-panel" id="chatbot-panel">
+  <div class="chatbot-header">
+    <div class="chatbot-header-info">
+      <div class="chatbot-avatar"><i class="devicon-godot-plain"></i></div>
+      <div>
+        <span class="chatbot-label">AI ASSISTANT</span>
+        <h4 class="chatbot-name">Zero-Route Assistant</h4>
+      </div>
+    </div>
+    <div class="chatbot-header-right">
+      <span class="chatbot-status"><span class="dot-pulse"></span> Online</span>
+      <button class="chatbot-close-btn" id="chatbot-close-btn"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+  </div>
+
+  <div class="chatbot-messages" id="chatbot-messages">
+    <div class="chatbot-msg chatbot-msg-bot">
+      Hi! Saya Zero-Route Assistant. Tanyakan apa saja tentang Dimas, proyeknya, atau keahliannya.
+    </div>
+  </div>
+
+  <div class="chatbot-input-row">
+    <input type="text" id="chatbot-input" placeholder="Tanyakan tentang Dimas...">
+    <button id="chatbot-send-btn" aria-label="Send"><i class="fa-solid fa-paper-plane"></i></button>
+  </div>
+</div>
+
 
 </div>
   <script src="script.js"></script>
