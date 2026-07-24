@@ -1,4 +1,4 @@
- document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   anchor.addEventListener('click', function (e) {
     const targetId = this.getAttribute('href');
     const targetEl = document.querySelector(targetId);
@@ -473,7 +473,7 @@ vinylLabel.classList.add('loaded');
 miniThumb.src = thumbUrl;
 miniTitle.textContent = item.snippet.title;
 miniChannel.textContent = item.snippet.channelTitle;
-miniPlayer.classList.add('show');⇝
+miniPlayer.classList.add('show');
 
 
   if (!isPlayerReady) {
