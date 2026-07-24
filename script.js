@@ -620,3 +620,73 @@ npVolumeBar?.addEventListener('input', () => {
 });
 
 loadYouTubeAPI();
+
+  // ===== CHATBOT (Zero-Route Assistant via Gemini Worker) =====
+const CHATBOT_ENDPOINT = "https://gemini-chat-bot.iostream911.workers.dev/";
+
+const chatbotToggleBtn = document.getElementById('chatbot-toggle-btn');
+const chatbotPanel = document.getElementById('chatbot-panel');
+const chatbotCloseBtn = document.getElementById('chatbot-close-btn');
+const chatbotMessages = document.getElementById('chatbot-messages');
+const chatbotInput = document.getElementById('chatbot-input');
+const chatbotSendBtn = document.getElementById('chatbot-send-btn');
+
+let chatHistory = [];
+
+chatbotToggleBtn?.addEventListener('click', () => {
+  chatbotPanel.classList.toggle('open');
+});
+
+chatbotCloseBtn?.addEventListener('click', () => {
+  chatbotPanel.classList.remove('open');
+});
+
+function addChatMessage(text, sender) {
+  const el = document.createElement('div');
+  el.className = `chatbot-msg chatbot-msg-${sender}`;
+  el.textContent = text;
+  chatbotMessages.appendChild(el);
+  chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+  return el;
+}
+
+async function sendChatMessage() {
+  const text = chatbotInput.value.trim();
+  if (!text) return;
+
+  addChatMessage(text, 'user');
+  chatbotInput.value = '';
+
+  const loadingEl = document.createElement('div');
+  loadingEl.className = 'chatbot-msg chatbot-msg-loading';
+  loadingEl.textContent = 'Mengetik...';
+  chatbotMessages.appendChild(loadingEl);
+  chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+
+  try {
+    const res = await fetch(CHATBOT_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: text, history: chatHistory })
+    });
+    const data = await res.json();
+
+    loadingEl.remove();
+    addChatMessage(data.reply, 'bot');
+
+    chatHistory.push({ role: 'user', parts: [{ text }] });
+    chatHistory.push({ role: 'model', parts: [{ text: data.reply }] });
+
+    // Batasi history biar payload nggak makin besar
+    if (chatHistory.length > 20) chatHistory = chatHistory.slice(-20);
+
+  } catch (err) {
+    loadingEl.remove();
+    addChatMessage('Maaf, terjadi kesalahan koneksi.', 'bot');
+  }
+}
+
+chatbotSendBtn?.addEventListener('click', sendChatMessage);
+chatbotInput?.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') sendChatMessage();
+});
