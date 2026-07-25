@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 
 <head>
@@ -443,12 +443,12 @@
             <h4 class="footer-title">Connect</h4>
             <p class="footer-text footer-email">iostream911@gmail.com</p>
             <div class="footer-socials">
-              <a href="https://github.com/zero-route" target="_blank"><i class="fa-brands fa-github"></i></a>
-              <a href="https://gitlab.com/-/user_settings/profile" target="_blank"><i class="fa-brands fa-gitlab"></i></a>
-              <a href="https://www.linkedin.com/in/dimas-aksa-oktapian-096541406" target="_blank"><i class="fa-brands fa-linkedin-in"></i></a>
-              <a href="https://t.me/Tehpucuts" target="_blank"><i class="fa-brands fa-telegram"></i></a>
-              <a href="https://www.instagram.com/uknown.9182/" target="_blank"><i class="fa-brands fa-instagram"></i></a>
-              <a href="https://www.tiktok.com/@altera1975" target="_blank"><i class="fa-brands fa-tiktok"></i></a>
+              <a href="https://github.com/zero-route" target="_blank" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
+              <a href="https://gitlab.com/-/user_settings/profile" target="_blank" aria-label="GitLab"><i class="fa-brands fa-gitlab"></i></a>
+              <a href="https://www.linkedin.com/in/dimas-aksa-oktapian-096541406" target="_blank" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+              <a href="https://t.me/Tehpucuts" target="_blank" aria-label="Telegram"><i class="fa-brands fa-telegram"></i></a>
+              <a href="https://www.instagram.com/uknown.9182/" target="_blank" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+              <a href="https://www.tiktok.com/@altera1975" target="_blank" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
             </div>
           </div>
         </div>
@@ -462,12 +462,12 @@
         <div class="music-view music-view-search active" id="view-search">
           <div class="music-player-header">
             <h3><i class="fa-solid fa-compact-disc"></i> Music Player</h3>
-            <button id="music-close-btn" class="music-close-btn"><i class="fa-solid fa-xmark"></i></button>
+            <button id="music-close-btn" class="music-close-btn" aria-label="Close music player"><i class="fa-solid fa-xmark"></i></button>
           </div>
 
           <div class="music-search-box">
-            <input type="text" id="music-search-input" placeholder="Cari lagu, artis...">
-            <button id="music-search-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+            <input type="text" id="music-search-input" placeholder="Cari lagu, artis..." aria-label="Search song or artist">
+            <button id="music-search-btn" aria-label="Search"><i class="fa-solid fa-magnifying-glass"></i></button>
           </div>
 
           <div class="music-results" id="music-results">
@@ -480,15 +480,15 @@
               <span id="np-title">Belum ada lagu diputar</span>
               <span id="np-channel">-</span>
             </div>
-            <button id="np-playpause"><i class="fa-solid fa-play"></i></button>
+            <button id="np-playpause" aria-label="Play or pause"><i class="fa-solid fa-play"></i></button>
           </div>
         </div>
 
         <div class="music-view music-view-nowplaying" id="view-nowplaying">
           <div class="np-full-header">
-            <button id="np-back-btn" class="np-back-btn"><i class="fa-solid fa-chevron-down"></i></button>
+            <button id="np-back-btn" class="np-back-btn" aria-label="Back to search"><i class="fa-solid fa-chevron-down"></i></button>
             <span>Now Playing</span>
-            <button id="music-close-btn-2" class="music-close-btn"><i class="fa-solid fa-xmark"></i></button>
+            <button id="music-close-btn-2" class="music-close-btn" aria-label="Close music player"><i class="fa-solid fa-xmark"></i></button>
           </div>
 
           <div class="vinyl-wrapper">
@@ -502,19 +502,19 @@
 
           <div class="np-progress-row">
             <span id="np-current-time">0:00</span>
-            <input type="range" id="np-progress-bar" min="0" max="100" value="0">
+            <input type="range" id="np-progress-bar" min="0" max="100" value="0" aria-label="Seek track position">
             <span id="np-duration">0:00</span>
           </div>
 
           <div class="np-controls-row">
-            <button id="np-prev-btn"><i class="fa-solid fa-backward-step"></i></button>
-            <button id="np-full-playpause"><i class="fa-solid fa-play"></i></button>
-            <button id="np-next-btn"><i class="fa-solid fa-forward-step"></i></button>
+            <button id="np-prev-btn" aria-label="Previous track"><i class="fa-solid fa-backward-step"></i></button>
+            <button id="np-full-playpause" aria-label="Play or pause"><i class="fa-solid fa-play"></i></button>
+            <button id="np-next-btn" aria-label="Next track"><i class="fa-solid fa-forward-step"></i></button>
           </div>
 
           <div class="np-volume-row">
             <i class="fa-solid fa-volume-low"></i>
-            <input type="range" id="np-volume-bar" min="0" max="100" value="80">
+            <input type="range" id="np-volume-bar" min="0" max="100" value="80" aria-label="Volume">
           </div>
         </div>
 
@@ -535,9 +535,9 @@
           <span id="mini-channel">-</span>
         </div>
         <div class="mini-controls">
-          <button id="mini-prev"><i class="fa-solid fa-backward-step"></i></button>
-          <button id="mini-playpause"><i class="fa-solid fa-play"></i></button>
-          <button id="mini-next"><i class="fa-solid fa-forward-step"></i></button>
+          <button id="mini-prev" aria-label="Previous track"><i class="fa-solid fa-backward-step"></i></button>
+          <button id="mini-playpause" aria-label="Play or pause"><i class="fa-solid fa-play"></i></button>
+          <button id="mini-next" aria-label="Next track"><i class="fa-solid fa-forward-step"></i></button>
         </div>
       </div>
     </div>
@@ -553,7 +553,7 @@
         </div>
         <div class="chatbot-header-right">
           <span class="chatbot-status"><span class="dot-pulse"></span> Online</span>
-          <button class="chatbot-close-btn" id="chatbot-close-btn"><i class="fa-solid fa-xmark"></i></button>
+          <button class="chatbot-close-btn" id="chatbot-close-btn" aria-label="Close chatbot"><i class="fa-solid fa-xmark"></i></button>
         </div>
       </div>
 
@@ -564,7 +564,7 @@
       </div>
 
       <div class="chatbot-input-row">
-        <input type="text" id="chatbot-input" placeholder="Tanyakan tentang Dimas...">
+        <input type="text" id="chatbot-input" placeholder="Tanyakan tentang Dimas..." aria-label="Type your message">
         <button id="chatbot-send-btn" aria-label="Send"><i class="fa-solid fa-paper-plane"></i></button>
       </div>
     </div>
