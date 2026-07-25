@@ -442,6 +442,18 @@ function setLoadingState(el, loading) {
   el.classList.toggle('is-loading', loading);
 }
 
+ function setPlayButtonsLoading(loading) {
+  setLoadingState(npPlayPause, loading);
+  setLoadingState(npFullPlayPause, loading);
+  setLoadingState(miniPlayPause, loading);
+}
+
+function decodeHtmlEntities(text) {
+  const textarea = document.createElement('textarea');
+  textarea.innerHTML = text;
+  return textarea.value;
+}
+
 function playTrackAt(index, clickedEl = null) {
   if (index < 0 || index >= currentQueue.length) return;
   currentIndex = index;
@@ -452,27 +464,30 @@ function playTrackAt(index, clickedEl = null) {
   // Loading indicator di hasil pencarian yang diklik
   if (clickedEl) setLoadingState(clickedEl, true);
 
-  npThumb.src = thumbUrl;
-  npTitle.textContent = item.snippet.title;
-  npChannel.textContent = item.snippet.channelTitle;
-  npFullTitle.textContent = item.snippet.title;
-  npFullChannel.textContent = item.snippet.channelTitle;
+  const decodedTitle = decodeHtmlEntities(item.snippet.title);
+const decodedChannel = decodeHtmlEntities(item.snippet.channelTitle);
+
+npThumb.src = thumbUrl;
+npTitle.textContent = decodedTitle;
+npChannel.textContent = decodedChannel;
+npFullTitle.textContent = decodedTitle;
+npFullChannel.textContent = decodedChannel;
 
   vinylLabel.src = thumbUrl;
   vinylLabel.classList.remove('loaded');
   vinylLabel.onload = () => vinylLabel.classList.add('loaded');
 
   miniThumb.src = thumbUrl;
-  miniTitle.textContent = item.snippet.title;
-  miniChannel.textContent = item.snippet.channelTitle;
+miniTitle.textContent = decodedTitle;
+miniChannel.textContent = decodedChannel;
 
   if (!isPlayerReady) {
     pendingVideoId = videoId;
     return;
   }
 
-  vinylDisc.classList.add('is-loading');
-  ytPlayer.loadVideoById(videoId);
+  setPlayButtonsLoading(true);
+ytPlayer.loadVideoById(videoId);
   isPlaying = true;
   hasPlayedOnce = true;
   switchView('nowplaying');
@@ -500,8 +515,8 @@ window.onYouTubeIframeAPIReady = function () {
         isPlayerReady = true;
         ytPlayer.setVolume(npVolumeBar ? npVolumeBar.value : 80);
         if (pendingVideoId) {
-          vinylDisc.classList.add('is-loading');
-          ytPlayer.loadVideoById(pendingVideoId);
+  setPlayButtonsLoading(true);
+  ytPlayer.loadVideoById(pendingVideoId);
           isPlaying = true;
           hasPlayedOnce = true;
           updatePlayPauseIcon();
@@ -512,13 +527,13 @@ window.onYouTubeIframeAPIReady = function () {
       onStateChange: (event) => {
         // Buffering (loading) state
         if (event.data === YT.PlayerState.BUFFERING) {
-          vinylDisc.classList.add('is-loading');
-        } else {
-          vinylDisc.classList.remove('is-loading');
-          document.querySelectorAll('.music-result-item.is-loading').forEach(el => {
-            el.classList.remove('is-loading');
-          });
-        }
+  setPlayButtonsLoading(true);
+} else {
+  setPlayButtonsLoading(false);
+  document.querySelectorAll('.music-result-item.is-loading').forEach(el => {
+    el.classList.remove('is-loading');
+  });
+}
 
         isPlaying = event.data === YT.PlayerState.PLAYING;
         updatePlayPauseIcon();
