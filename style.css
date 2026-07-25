@@ -1070,6 +1070,12 @@ header.fade-out {
   padding: 14px;
   transform: translateY(30px);
   opacity: 0;
+  transition: 0.5s;
+}
+
+.project-card:hover {
+  scale: 1.05;
+  border: 1px solid var(--border-active);
 }
 
 .project-card.in-view {
@@ -1085,7 +1091,14 @@ header.fade-out {
 .project-desc { font-size: 12px; color: var(--text-secondary); line-height: 1.6; }
 
 .tools-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
-.tool-card { background-color: rgba(10, 14, 39, 0.6); border: 1px solid rgba(56, 189, 248, 0.15); border-radius: 10px; padding: 18px; }
+.tool-card { background-color: rgba(10, 14, 39, 0.6); border: 1px solid rgba(56, 189, 248, 0.15); border-radius: 10px; padding: 18px;
+  transition: 0.5s;
+}
+
+.tool-card:hover {
+  scale: 1.05;
+  border: 1px solid var(--border-active);
+}
 
 .tool-left {
   transform: translateX(-60px);
