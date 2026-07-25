@@ -4,12 +4,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- CSS utama tetap load normal karena kritikal untuk render pertama -->
   <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">  
-  <link rel="stylesheet" type='text/css' href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Audiowide">
+
+  <!-- Font eksternal & icon library: di-defer supaya tidak blocking render pertama -->
+  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="https://fonts.googleapis.com/css?family=Audiowide&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+
+  <!-- Fallback untuk browser/kondisi tanpa JS -->
+  <noscript>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Audiowide&display=swap">
+  </noscript>
+
   <title>Portofolio Website</title>
 </head>
 
@@ -117,7 +132,7 @@
         
         <div class="about-content">
           <div class="about-photo reveal">
-            <img src="asset/profile.jpg" alt="Dimas Aksa Oktapian">
+            <img src="asset/profile.jpg" alt="Dimas Aksa Oktapian" width="180" height="180">
           </div>
           
           <div class="about-text">
@@ -169,7 +184,7 @@
           <div class="timeline-item item-left reveal-left">
             <div class="timeline-dot"></div>
             <div class="timeline-box">
-              <img src="https://ghchart.rshah.org/39d353/zero-route" alt="GitHub Contribution Chart" class="timeline-chart-img">
+              <img src="https://ghchart.rshah.org/39d353/zero-route" alt="GitHub Contribution Chart" class="timeline-chart-img" loading="lazy" width="800" height="112">
               <h4 class="timeline-box-title">GitHub Activity</h4>
               <p class="timeline-box-desc">Jumlah kontribusi saya di github, Berbasis data realtime dari akun zero-route.io.</p>
             </div>
@@ -178,7 +193,7 @@
           <div class="timeline-item item-right reveal-right">
             <div class="timeline-dot"></div>
             <div class="timeline-box">
-              <img src="asset/esp-robot.jpg" alt="Project">
+              <img src="asset/esp-robot.jpg" alt="Project" loading="lazy" width="600" height="400">
               <h4 class="timeline-box-title">Esp Robotic AI</h4>
               <p class="timeline-box-desc">Robot multi medan, dengan berbasis Esp32 dan AI terintegrasi.</p>
             </div>
@@ -187,7 +202,7 @@
           <div class="timeline-item item-left reveal-left">
             <div class="timeline-dot"></div>
             <div class="timeline-box">
-              <img src="asset/pythonAI.jpg" alt="Project 3">
+              <img src="asset/pythonAI.jpg" alt="Project 3" loading="lazy" width="600" height="400">
               <h4 class="timeline-box-title">AI Agent</h4>
               <p class="timeline-box-desc">AI Agent pribadi yang dibangun berdasarkan bahasa pemrograman Python dan library machine learning.</p>
             </div>
@@ -196,7 +211,7 @@
           <div class="timeline-item item-right reveal-right">
             <div class="timeline-dot"></div>
             <div class="timeline-box">
-              <img src="asset/n8n.jpg" alt="Project 4">
+              <img src="asset/n8n.jpg" alt="Project 4" loading="lazy" width="600" height="400">
               <h4 class="timeline-box-title">N8n AI Agent</h4>
               <p class="timeline-box-desc">AI Agent berbasis N8N untuk otomatisasi berbagai tugas sederhana.</p>
             </div>
@@ -225,17 +240,17 @@
           <div class="tab-panel active" id="panel-project">
             <div class="project-grid">
               <div class="project-card panel-reveal" style="--index:0">
-                <img src="asset/eirp.jpg" alt="Project 1">
+                <img src="asset/eirp.jpg" alt="Project 1" loading="lazy" width="600" height="400">
                 <h4 class="project-name">Eirp Calculator</h4>
                 <p class="project-desc">Web khusus untuk kalkulasi keamanan & keandalan dalam pemilihan perangkat RF, dan menghindari estimasi perangkat jamming.</p>
               </div>
               <div class="project-card panel-reveal" style="--index:1">
-                <img src="asset/kali.jpg" alt="Project 2">
+                <img src="asset/kali.jpg" alt="Project 2" loading="lazy" width="600" height="400">
                 <h4 class="project-name">Kali Tools</h4>
                 <p class="project-desc">Website untuk referensi tools, berdasarkan tools resmi di Kali Linux, dibuat sebagai panduan dan penjelasan singkat.</p>
               </div>
               <div class="project-card panel-reveal" style="--index:2">
-                <img src="asset/pmr.jpg" alt="Project 3">
+                <img src="asset/pmr.jpg" alt="Project 3" loading="lazy" width="600" height="400">
                 <h4 class="project-name">Pmr Website</h4>
                 <p class="project-desc">Project website untuk keperluan organisasi Palang Merah Remaja yang bermarkas di UPT SMKN 2 BARRU.</p>
               </div>
