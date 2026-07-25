@@ -659,7 +659,7 @@ chatbotCloseBtn?.addEventListener('click', () => {
 function addChatMessage(text, sender) {
   const el = document.createElement('div');
   el.className = `chatbot-msg chatbot-msg-${sender}`;
-  el.style.whiteSpace = 'pre-line'; // <-- Bikin enter/line-break dari AI terbaca rapi di HTML
+  el.style.whiteSpace = 'pre-line';
   el.textContent = text;
   chatbotMessages.appendChild(el);
   chatbotMessages.scrollTop = chatbotMessages.scrollHeight;

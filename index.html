@@ -4,11 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <!-- CSS utama tetap load normal karena kritikal untuk render pertama -->
   <link rel="stylesheet" href="style.css">
-
-  <!-- Font eksternal & icon library: di-defer supaya tidak blocking render pertama -->
   <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <link rel="preload" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <link rel="preload" href="https://fonts.googleapis.com/css?family=Audiowide&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
@@ -18,7 +14,7 @@
   <link rel="preconnect" href="https://cdnjs.cloudflare.com">
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
 
-  <!-- Fallback untuk browser/kondisi tanpa JS -->
+
   <noscript>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css">
