@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="id">
 
 <head>
@@ -11,9 +11,6 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preconnect" href="https://cdnjs.cloudflare.com">
-  <link rel="preconnect" href="https://cdn.jsdelivr.net">
-
 
   <noscript>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -64,11 +61,17 @@
 
           <div class="hero-action-buttons">
             <button class="floating-btn chatbot-btn" id="chatbot-toggle-btn" aria-label="Open AI chatbot">
-              <i class="devicon-godot-plain"></i>
+              
+            <i class="devicon-networkx-plain"></i>
+          
             </button>
             <button class="floating-btn music-btn" id="music-toggle-btn" aria-label="Open music player">
               <i class="fa-solid fa-music"></i>
             </button>
+            
+            <button class="floating-btn trivia-btn" id="trivia-toggle-btn" aria-label="Open trivia quiz">
+  <i class="fa-solid fa-brain"></i>
+</button>
           </div>
           
           <h1 class="hero-title">
@@ -346,6 +349,24 @@
               </div>
             </div>
 
+     <div class="skills-group">
+              <h3 class="skills-group-title">GIT</h3>
+              <div class="skills-grid">
+                <div class="skill-item panel-reveal" style="--index:14">
+            <i class="devicon-git-plain colored"></i>
+          <span>GIT</span></div>
+                <div class="skill-item panel-reveal" style="--index:15">
+            <i class="devicon-github-original colored"></i>
+          </i><span>GitHub</span></div>
+                <div class="skill-item panel-reveal" style="--index:16">
+            <i class="devicon-gitlab-plain colored"></i>
+          <span>GitLab</span></div>
+                <div class="skill-item panel-reveal" style="--index:17">
+            <i class="devicon-githubcodespaces-plain colored"></i>
+          <span>GitHubCodeSpace</span></div>
+              </div>
+            </div>
+
             <div class="skills-group">
               <h3 class="skills-group-title">OS Installation</h3>
               <div class="skills-grid">
@@ -467,6 +488,80 @@
       </footer>
     </section>
 
+    <div class="trivia-overlay" id="trivia-overlay">
+  <div class="trivia-panel">
+
+    <div class="trivia-view trivia-view-setup active" id="trivia-view-setup">
+      <div class="trivia-header">
+        <h3><i class="fa-solid fa-brain"></i> Trivia Quiz</h3>
+        <button id="trivia-close-btn" class="trivia-close-btn" aria-label="Close trivia"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="trivia-setup-body">
+        <label class="trivia-label" for="trivia-category-select">Kategori</label>
+        <select id="trivia-category-select" class="trivia-select">
+          <option value="">Semua Kategori</option>
+        </select>
+
+        <label class="trivia-label" for="trivia-difficulty-select">Tingkat Kesulitan</label>
+        <select id="trivia-difficulty-select" class="trivia-select">
+          <option value="easy">Mudah</option>
+          <option value="medium" selected>Sedang</option>
+          <option value="hard">Sulit</option>
+        </select>
+
+        <label class="trivia-label" for="trivia-amount-select">Jumlah Soal</label>
+        <select id="trivia-amount-select" class="trivia-select">
+          <option value="5">5 Soal</option>
+          <option value="10" selected>10 Soal</option>
+          <option value="15">15 Soal</option>
+        </select>
+
+        <button id="trivia-start-btn" class="btn-primary trivia-start-btn">Mulai Kuis <i class="fa-solid fa-play"></i></button>
+        <p class="trivia-hint" id="trivia-setup-hint"></p>
+      </div>
+    </div>
+
+    <div class="trivia-view trivia-view-quiz" id="trivia-view-quiz">
+      <div class="trivia-header">
+        <span class="trivia-progress" id="trivia-progress">Soal 1/10</span>
+        <button id="trivia-close-btn-2" class="trivia-close-btn" aria-label="Close trivia"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="trivia-score-row">
+        <span><i class="fa-solid fa-star"></i> Skor: <span id="trivia-score">0</span></span>
+      </div>
+
+      <div class="trivia-question-box">
+        <span class="trivia-category-tag" id="trivia-category-tag">-</span>
+        <p class="trivia-question-text" id="trivia-question-text">Memuat soal...</p>
+      </div>
+
+      <div class="trivia-answers" id="trivia-answers"></div>
+
+      <button id="trivia-next-btn" class="btn-primary trivia-next-btn" disabled>Lanjut <i class="fa-solid fa-arrow-right"></i></button>
+    </div>
+
+    <div class="trivia-view trivia-view-result" id="trivia-view-result">
+      <div class="trivia-header">
+        <span>Hasil Kuis</span>
+        <button id="trivia-close-btn-3" class="trivia-close-btn" aria-label="Close trivia"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="trivia-result-body">
+        <i class="fa-solid fa-trophy trivia-trophy-icon"></i>
+        <h4 class="trivia-result-score" id="trivia-result-score">0 / 0</h4>
+        <p class="trivia-result-label" id="trivia-result-label">Skor Kamu</p>
+        <div class="trivia-result-buttons">
+          <button id="trivia-retry-btn" class="btn-primary">Main Lagi <i class="fa-solid fa-rotate-right"></i></button>
+          <button id="trivia-back-setup-btn" class="btn-outline">Ganti Kategori</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
     <div class="music-player-overlay" id="music-overlay">
       <div class="music-player-panel">
         
@@ -556,7 +651,9 @@
     <div class="chatbot-panel" id="chatbot-panel">
       <div class="chatbot-header">
         <div class="chatbot-header-info">
-          <div class="chatbot-avatar"><i class="devicon-godot-plain"></i></div>
+          <div class="chatbot-avatar">
+            <i class="devicon-networkx-plain"></i>
+          </div>
           <div>
             <span class="chatbot-label">AI ASSISTANT</span>
             <h4 class="chatbot-name">Lily</h4>

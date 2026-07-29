@@ -1,4 +1,4 @@
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   anchor.addEventListener('click', function (e) {
     const targetId = this.getAttribute('href');
     const targetEl = document.querySelector(targetId);
@@ -705,4 +705,248 @@ async function sendChatMessage() {
 chatbotSendBtn?.addEventListener('click', sendChatMessage);
 chatbotInput?.addEventListener('keydown', (e) => {
   if (e.key === 'Enter') sendChatMessage();
+});
+
+ // ===== TRIVIA QUIZ (Open Trivia DB) =====
+const TRIVIA_API = "https://opentdb.com/api.php";
+const TRIVIA_CATEGORY_API = "https://opentdb.com/api_category.php";
+
+const triviaToggleBtn = document.getElementById('trivia-toggle-btn');
+const triviaOverlay = document.getElementById('trivia-overlay');
+const triviaCloseBtns = [
+  document.getElementById('trivia-close-btn'),
+  document.getElementById('trivia-close-btn-2'),
+  document.getElementById('trivia-close-btn-3')
+];
+
+const triviaViewSetup = document.getElementById('trivia-view-setup');
+const triviaViewQuiz = document.getElementById('trivia-view-quiz');
+const triviaViewResult = document.getElementById('trivia-view-result');
+
+const triviaCategorySelect = document.getElementById('trivia-category-select');
+const triviaDifficultySelect = document.getElementById('trivia-difficulty-select');
+const triviaAmountSelect = document.getElementById('trivia-amount-select');
+const triviaStartBtn = document.getElementById('trivia-start-btn');
+const triviaSetupHint = document.getElementById('trivia-setup-hint');
+
+const triviaProgress = document.getElementById('trivia-progress');
+const triviaScoreEl = document.getElementById('trivia-score');
+const triviaCategoryTag = document.getElementById('trivia-category-tag');
+const triviaQuestionText = document.getElementById('trivia-question-text');
+const triviaAnswersEl = document.getElementById('trivia-answers');
+const triviaNextBtn = document.getElementById('trivia-next-btn');
+
+const triviaResultScore = document.getElementById('trivia-result-score');
+const triviaResultLabel = document.getElementById('trivia-result-label');
+const triviaRetryBtn = document.getElementById('trivia-retry-btn');
+const triviaBackSetupBtn = document.getElementById('trivia-back-setup-btn');
+
+let triviaCategoriesLoaded = false;
+let triviaQuestions = [];
+let triviaCurrentIndex = 0;
+let triviaScore = 0;
+let triviaAnswered = false;
+
+triviaToggleBtn?.addEventListener('click', () => {
+  triviaOverlay.classList.add('open');
+  triviaSwitchView('setup');
+  if (!triviaCategoriesLoaded) loadTriviaCategories();
+});
+
+triviaCloseBtns.forEach(btn => {
+  btn?.addEventListener('click', () => triviaOverlay.classList.remove('open'));
+});
+
+triviaOverlay?.addEventListener('click', (e) => {
+  if (e.target === triviaOverlay) triviaOverlay.classList.remove('open');
+});
+
+function triviaSwitchView(viewName) {
+  triviaViewSetup.classList.toggle('active', viewName === 'setup');
+  triviaViewQuiz.classList.toggle('active', viewName === 'quiz');
+  triviaViewResult.classList.toggle('active', viewName === 'result');
+}
+
+async function loadTriviaCategories() {
+  try {
+    const res = await fetch(TRIVIA_CATEGORY_API);
+    const data = await res.json();
+    if (Array.isArray(data.trivia_categories)) {
+      data.trivia_categories.forEach(cat => {
+        const opt = document.createElement('option');
+        opt.value = cat.id;
+        opt.textContent = cat.name;
+        triviaCategorySelect.appendChild(opt);
+      });
+      triviaCategoriesLoaded = true;
+    }
+  } catch (err) {
+    // Kalau gagal load kategori, "Semua Kategori" tetap bisa dipakai
+  }
+}
+
+function triviaDecodeHtml(text) {
+  const textarea = document.createElement('textarea');
+  textarea.innerHTML = text;
+  return textarea.value;
+}
+
+function triviaShuffle(arr) {
+  const copy = [...arr];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+const triviaTranslateCache = {};
+
+async function triviaTranslate(text) {
+  if (triviaTranslateCache[text]) return triviaTranslateCache[text];
+  try {
+    const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=id&dt=t&q=${encodeURIComponent(text)}`);
+    const data = await res.json();
+    const translated = data[0].map(chunk => chunk[0]).join('');
+    triviaTranslateCache[text] = translated;
+    return translated;
+  } catch (err) {
+    console.error('Translate error:', err);
+    return text;
+  }
+}
+
+ triviaStartBtn?.addEventListener('click', async () => {
+  const category = triviaCategorySelect.value;
+  const difficulty = triviaDifficultySelect.value;
+  const amount = triviaAmountSelect.value;
+
+  triviaStartBtn.disabled = true;
+  triviaSetupHint.textContent = 'Memuat soal...';
+
+  try {
+    let url = `${TRIVIA_API}?amount=${amount}&type=multiple&difficulty=${difficulty}`;
+    if (category) url += `&category=${category}`;
+
+    const res = await fetch(url);
+    const data = await res.json();
+
+    if (data.response_code !== 0 || !data.results || data.results.length === 0) {
+      triviaSetupHint.textContent = 'Soal tidak ditemukan untuk kombinasi ini, coba kategori lain.';
+      triviaStartBtn.disabled = false;
+      return;
+    }
+
+    triviaSetupHint.textContent = 'Menerjemahkan soal...';
+
+    triviaQuestions = await Promise.all(data.results.map(async (q) => {
+      const decodedQuestion = triviaDecodeHtml(q.question);
+      const decodedCorrect = triviaDecodeHtml(q.correct_answer);
+      const decodedIncorrect = q.incorrect_answers.map(triviaDecodeHtml);
+      const decodedCategory = triviaDecodeHtml(q.category);
+
+      const [translatedCategory, translatedQuestion] = await Promise.all([
+        triviaTranslate(decodedCategory),
+        triviaTranslate(decodedQuestion)
+      ]);
+
+      return {
+        category: translatedCategory,
+        question: translatedQuestion,
+        correct: decodedCorrect,
+        answers: triviaShuffle([decodedCorrect, ...decodedIncorrect])
+      };
+    }));
+
+    triviaCurrentIndex = 0;
+    triviaScore = 0;
+    triviaSetupHint.textContent = '';
+    triviaStartBtn.disabled = false;
+    triviaSwitchView('quiz');
+    renderTriviaQuestion();
+
+  } catch (err) {
+    console.error('Trivia error:', err);
+    triviaSetupHint.textContent = 'Gagal memuat soal, coba lagi.';
+    triviaStartBtn.disabled = false;
+  }
+});
+
+function renderTriviaQuestion() {
+  const q = triviaQuestions[triviaCurrentIndex];
+  triviaAnswered = false;
+
+  triviaProgress.textContent = `Soal ${triviaCurrentIndex + 1}/${triviaQuestions.length}`;
+  triviaScoreEl.textContent = triviaScore;
+  triviaCategoryTag.textContent = q.category;
+  triviaQuestionText.textContent = q.question;
+
+  triviaAnswersEl.innerHTML = '';
+  q.answers.forEach(answer => {
+    const btn = document.createElement('button');
+    btn.className = 'trivia-answer-btn';
+    btn.textContent = answer;
+    btn.addEventListener('click', () => handleTriviaAnswer(btn, answer, q.correct));
+    triviaAnswersEl.appendChild(btn);
+  });
+
+  triviaNextBtn.disabled = true;
+  triviaNextBtn.innerHTML = triviaCurrentIndex === triviaQuestions.length - 1
+    ? 'Lihat Hasil <i class="fa-solid fa-flag-checkered"></i>'
+    : 'Lanjut <i class="fa-solid fa-arrow-right"></i>';
+}
+
+function handleTriviaAnswer(clickedBtn, answer, correctAnswer) {
+  if (triviaAnswered) return;
+  triviaAnswered = true;
+
+  const allBtns = triviaAnswersEl.querySelectorAll('.trivia-answer-btn');
+  allBtns.forEach(btn => {
+    btn.disabled = true;
+    if (btn.textContent === correctAnswer) btn.classList.add('correct');
+  });
+
+  if (answer === correctAnswer) {
+    triviaScore++;
+    triviaScoreEl.textContent = triviaScore;
+  } else {
+    clickedBtn.classList.add('wrong');
+  }
+
+  triviaNextBtn.disabled = false;
+}
+
+triviaNextBtn?.addEventListener('click', () => {
+  triviaCurrentIndex++;
+  if (triviaCurrentIndex < triviaQuestions.length) {
+    renderTriviaQuestion();
+  } else {
+    showTriviaResult();
+  }
+});
+
+function showTriviaResult() {
+  const total = triviaQuestions.length;
+  const percentage = Math.round((triviaScore / total) * 100);
+
+  triviaResultScore.textContent = `${triviaScore} / ${total}`;
+
+  let label = 'Ayo coba lagi!';
+  if (percentage === 100) label = 'Sempurna! 🎉';
+  else if (percentage >= 80) label = 'Keren banget!';
+  else if (percentage >= 50) label = 'Not bad!';
+
+  triviaResultLabel.textContent = label;
+  triviaSwitchView('result');
+}
+
+triviaRetryBtn?.addEventListener('click', () => {
+  triviaCurrentIndex = 0;
+  triviaScore = 0;
+  triviaSwitchView('quiz');
+  renderTriviaQuestion();
+});
+
+triviaBackSetupBtn?.addEventListener('click', () => {
+  triviaSwitchView('setup');
 });
