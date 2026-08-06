@@ -56,19 +56,19 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const rolesList = [
+    'Website Developer', 
     'Network Engineer',
     'Penetration Testing',
     'Full-Stack Developer',
     'Automation Engineer',
     'Robotic Engineer',
     'Electrical Engineer',
-    'Tech Enthusiast'
   ];
 
   const skillsList = [
     'HTML5',
     'CSS3',
-    'TailwindCSS',
+    'Tailwind-CSS',
     'JavaScript',
     'TypeScript',
     'React',
@@ -76,7 +76,6 @@ document.addEventListener("DOMContentLoaded", () => {
     'PHP',
     'Laravel',
     'Ruby',
-    'Express.js',
     'MongoDB',
     'PostgreSQL',
     'MySQL',
@@ -86,7 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
     'C++',
     'C',
     'Java',
-    'Arduino'
+    'VS-Code',
   ];
 
   let isStarted = false;
